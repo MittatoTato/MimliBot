@@ -3,30 +3,51 @@ import torch
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, TextDataset, DataCollatorForLanguageModeling, Trainer, TrainingArguments
 import zipfile
 import os
-import requests
 from keep_alive import keep_alive
 keep_alive()
 url = 'https://drive.google.com/file/d/1umM2MDzlvZbo7_850yqY5YWVXRjt2FHS/view?usp=sharing'
+id='1umM2MDzlvZbo7_850yqY5YWVXRjt2FHS'
 output = './yes.zip'
 
-def download_file_from_google_drive(shareable_link, destination):
-    # Extract the file ID from the shareable link
-    file_id = shareable_link.split('/d/')[1].split('/')[0]
+import sys
+import requests
 
-    # Construct the direct download URL
-    download_url = f'https://drive.google.com/uc?export=download&id={file_id}'
 
-    # Make a GET request to fetch the file
-    response = requests.get(download_url, stream=True)
+def download_file_from_google_drive(file_id, destination):
+    URL = "https://docs.google.com/uc?export=download&confirm=1"
 
-    # Save the file content to the destination file
-    with open(destination, 'wb') as file:
-        for chunk in response.iter_content(chunk_size=1024):
+    session = requests.Session()
+
+    response = session.get(URL, params={"id": file_id}, stream=True)
+    token = get_confirm_token(response)
+
+    if token:
+        params = {"id": file_id, "confirm": token}
+        response = session.get(URL, params=params, stream=True)
+
+    save_response_content(response, destination)
+
+
+def get_confirm_token(response):
+    for key, value in response.cookies.items():
+        if key.startswith("download_warning"):
+            return value
+
+    return None
+
+
+def save_response_content(response, destination):
+    CHUNK_SIZE = 32768
+
+    with open(destination, "wb") as f:
+        for chunk in response.iter_content(CHUNK_SIZE):
             if chunk:  # filter out keep-alive new chunks
-                file.write(chunk)
+                f.write(chunk)
 
-    print(f'File downloaded successfully to {destination}')
-if not os.path.exists(output): download_file_from_google_drive(url, output)
+
+
+
+if not os.path.exists(output): download_file_from_google_drive(id, output)
 if not os.path.exists("./content/gpt2-finetuned"):
     with zipfile.ZipFile(output, 'r') as zip_ref:
         zip_ref.extractall(".")
