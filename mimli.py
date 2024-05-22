@@ -3,6 +3,13 @@ import torch
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, TextDataset, DataCollatorForLanguageModeling, Trainer, TrainingArguments
 import zipfile
 import os
+import gdown
+url = 'https://drive.google.com/uc?id=1umM2MDzlvZbo7_850yqY5YWVXRjt2FHS'
+output = './yes.zip'
+if not os.path.exists(output): gdown.download(url, output, quiet=False)
+if not os.path.exists("./content/gpt2-finetuned"):
+    with zipfile.ZipFile(output, 'r') as zip_ref:
+        zip_ref.extractall(".")
 special_token = "<|endoftext|>"
 model = GPT2LMHeadModel.from_pretrained("./content/gpt2-finetuned")
 tokenizer = GPT2Tokenizer.from_pretrained("./content/gpt2-finetuned")
@@ -13,7 +20,7 @@ def generate_response(input_text):
                                  return_tensors='pt')
     output = model.generate(
         input_ids,
-        max_length=100,
+        max_length=60,
         num_return_sequences=1,
     )
     return tokenizer.decode(output[0], skip_special_tokens=True)
