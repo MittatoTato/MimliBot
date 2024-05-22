@@ -4,6 +4,8 @@ from transformers import GPT2Tokenizer, GPT2LMHeadModel, TextDataset, DataCollat
 import zipfile
 import os
 import gdown
+from keep_alive import keep_alive
+keep_alive()
 url = 'https://drive.google.com/uc?id=1umM2MDzlvZbo7_850yqY5YWVXRjt2FHS'
 output = './yes.zip'
 if not os.path.exists(output): gdown.download(url, output, quiet=False)
@@ -49,4 +51,5 @@ async def on_message(message):
 
 
 TOKEN = 'MTI0MjE3NTM0NTQ0OTM2OTY3MQ.GekeXu.25al0lfHLObqh92OSqEQRvsPuyh0ok5Hb7ZDKs'
+TOKEN=os.environ.get('token')
 client.run(TOKEN)
