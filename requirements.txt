@@ -3,4 +3,3 @@ flask
 discord.py
 torch
 transformers
-gdown
