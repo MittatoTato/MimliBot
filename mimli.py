@@ -6,7 +6,7 @@ import os
 import requests
 from keep_alive import keep_alive
 keep_alive()
-url = 'https://drive.google.com/uc?id=1umM2MDzlvZbo7_850yqY5YWVXRjt2FHS'
+url = 'https://drive.google.com/file/d/1umM2MDzlvZbo7_850yqY5YWVXRjt2FHS/view?usp=sharing'
 output = './yes.zip'
 
 def download_file_from_google_drive(shareable_link, destination):
