@@ -3,8 +3,15 @@ import torch
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, TextDataset, DataCollatorForLanguageModeling, Trainer, TrainingArguments
 import zipfile
 import os
+import gdown
 from keep_alive import keep_alive
 keep_alive()
+url = 'https://drive.google.com/uc?id=1umM2MDzlvZbo7_850yqY5YWVXRjt2FHS'
+output = './yes.zip'
+if not os.path.exists(output): gdown.download(url, output, quiet=False)
+if not os.path.exists("./content/gpt2-finetuned"):
+    with zipfile.ZipFile(output, 'r') as zip_ref:
+        zip_ref.extractall(".")
 special_token = "<|endoftext|>"
 model = GPT2LMHeadModel.from_pretrained("./content/gpt2-finetuned")
 tokenizer = GPT2Tokenizer.from_pretrained("./content/gpt2-finetuned")
