@@ -1,3 +1,6 @@
 aiogram ==2.23.1
 flask
+discord.py
+torch
+transformers
 gdown
